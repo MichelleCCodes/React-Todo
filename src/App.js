@@ -16,6 +16,8 @@ class App extends React.Component {
     });
   };
 
+//
+
   handleSubmit = (e, newTask) => {
     e.preventDefault();
     let taskShape = {
