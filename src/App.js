@@ -1,75 +1,67 @@
 import React from "react";
-import ToDoList from "./components/TodoComponents/TodoList";
-import ToDoForm from "./components/TodoComponents/TodoForm";
-class App extends React.Component {
-  // you will need a place to store your state in this component.
-  // design `App` to be the parent component of your application.
-  // this component is going to take care of state, and any change handlers you need to work with your state
-  state = {
-    todos: []
-  };
+import TodoList from "./components/TodoComponents/TodoList";
+import TodoForm from "./components/TodoComponents/TodoForm";
+import { render } from "react-dom";
 
-  componentDidMount = () => {
-    const localToDos = JSON.parse(localStorage.getItem("todoList"));
+const tasks = [];
+
+class App extends React.Component{
+  constructor (){
+    super();
+    this.state = {
+      tasks: tasks
+    }
+  }
+
+  handleTaskToggle = taskId => {
     this.setState({
-      todos: localToDos || []
+      tasks: this.state.tasks.map(task=>{
+        if(task.id === taskId){
+          return {
+            ...task, completed: !task.completed
+          }
+        }
+        return task; 
+      })
     });
-  };
+  }
 
-//
-
-  handleSubmit = (e, newTask) => {
-    e.preventDefault();
-    let taskShape = {
-      task: newTask,
-      id: Date.now(),
+  handleTaskAdd = itemName => {
+    const task = {
+      task: itemName, 
+      id: Date.now(), 
       completed: false
     };
 
-    const newToDoList = [...this.state.todos, taskShape];
+   const newTasks = [...this.state.tasks, task]; 
 
-    this.setState({
-      todos: newToDoList
-    });
-    localStorage.setItem("todoList", JSON.stringify(newToDoList));
-  };
-
-  toggleCompleted = id => {
-    const toDoById = this.state.todos.map(todo => {
-      return todo.id === id ? { ...todo, completed: !todo.completed } : todo;
-    });
-    this.setState({
-      todos: toDoById
-    });
-    localStorage.setItem("todoList", JSON.stringify(toDoById));
-  };
-
-  clearCompleted = () => {
-    const completed = this.state.todos.filter(todo => {
-      return todo.completed === false;
-    });
-    this.setState({
-      todos: completed
-    });
-    localStorage.setItem("todoList", JSON.stringify(completed));
-  };
-
-  render() {
-    if (!this.state.todos) return <h1>loading to dos... </h1>;
-    return (
-      <div>
-        <h2>Welcome to your Todo App!</h2>
-        <ToDoList
-          todos={this.state.todos}
-          toggleCompleted={this.toggleCompleted}
-        />
-        <ToDoForm
-          handleSubmit={this.handleSubmit}
-          clearCompleted={this.clearCompleted}
-        />
-      </div>
-    );
+   this.setState({
+    tasks: newTasks
+  });
   }
+
+  handleTaskCompleted = () => {
+    const newTasks = this.state.tasks.filter(task => {
+      return(!task.completed); 
+    });
+
+  this.setState({
+    tasks: newTasks
+  })
+  }
+  
+  render() {
+    return (
+      <div className="App">
+        <div className="header">
+           <h1>To Do List</h1>
+        <TodoList tasks={this.state.tasks} handleTaskToggle={this.handleTaskToggle}/>
+           <TodoForm handleTaskAdd={this.handleTaskAdd} handleTaskCompleted={this.handleTaskCompleted}/>
+         </div>
+       </div>
+    )
+  }
+
 }
 
 export default App;

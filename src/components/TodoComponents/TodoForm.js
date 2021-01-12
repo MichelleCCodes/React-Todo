@@ -1,43 +1,44 @@
-import React from "react";
+import React from 'react'; 
 
-class ToDoForm extends React.Component {
-  constructor(props) {
-    super(props);
+class TodoForm extends React.Component {
+  constructor (){
+    super(); 
     this.state = {
-      newTask: ""
-    };
+      inputValue: ""
+    }
   }
-
-  handleInput = e => {
+  
+  handleChanges = e => {
     this.setState({
-      [e.target.name]: e.target.value
+      inputValue: e.target.value
     });
   };
 
   handleSubmit = e => {
     e.preventDefault();
+    this.props.handleTaskAdd(this.state.inputValue);
     this.setState({
-      newTask: ""
+      inputValue:""
     });
-    this.props.handleSubmit(e, this.state.newTask);
-  };
+  }
 
-  render() {
+  handleClick = ()=> {
+    this.props.handleTaskCompleted();
+  }
+
+  render(){
     return (
       <>
-        <form onSubmit={this.handleSubmit}>
-          <input
-            value={this.state.newTask}
-            name="newTask"
-            placeholder="new task..."
-            onChange={this.handleInput}
-          />
-          <button type="submit">+</button>
-        </form>
-        <button onClick={this.props.clearCompleted}>clear completed</button>
+      <form onSubmit={this.handleSubmit}>
+        {
+        <input value={this.state.inputValue} onChange={this.handleChanges} type="text" name="task"/>
+        }
+        <button>Add</button>
+        <button onClick={this.handleClick} className="clear-btn">Clear Task</button>
+      </form>
       </>
     );
   }
 }
 
-export default ToDoForm;
+export default TodoForm;
